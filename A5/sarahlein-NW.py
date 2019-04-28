@@ -144,7 +144,7 @@ def calculate(s_align, t_align):
 def print_results(identity, score):
     #print("identity: %3.3f " % identity + "%", file=sys.stderr)
     #print("score: ", score, file=sys.stderr)
-    print(score, file=sys.stderr)
+    print(score, file=sys.stderr) # ourput score to stdterror
 
 
 def nmw(seq1, seq2, seqID1, seqID2):
@@ -159,25 +159,26 @@ def nmw(seq1, seq2, seqID1, seqID2):
     s = s_align[::-1]
     t = t_align[::-1]
     stars_rev = stars[::-1]
+    rows = len(seq1) / 60 # calculate needed rows
     print("CLUSTAL\n")
-    print(seqID1, s[0:60:1])
-    print(seqID2, t[0:60:1])
-    print("".ljust(len(seqID1)),stars_rev[:60:1], "\n")
-    print(seqID1, s[61::1])
-    print(seqID2, t[61::1])
-    print("".ljust(len(seqID1)),stars_rev[61::1])
+    for i in range(1, int(rows) + 2):
+        if i == int(rows) + 2 and rows > int(n):
+            print(seqID1, "\t", s[60 * (i - 1)::])
+            print(seqID2, "\t", t[60 * (i - 1)::])
+            print("".ljust(len(seqID1)), "\t", stars_rev[60 * (i - 1)::], "\n")
+            break
+        print(seqID1, "\t", s[60 * (i - 1):60 * i])
+        print(seqID2, "\t", t[60 * (i - 1):60 * i])
+        print("".ljust(len(seqID1)), "\t", stars_rev[60 * (i - 1):60 * i], "\n")
+
     identity, score = calculate(s_align, t_align)
 
     print_results(identity, score)
 
 
 if __name__ == "__main__":
-    #if len(sys.argv) <= 1:
-    #    print("fasta input missing")
-    #else:
-    #    filename = sys.argv[1]
-    #    input_file = open(filename, 'r')
+
 
     seq1, seq2, seqID1, seqID2 = readFasta()
-    #fasta_sequences = list(SeqIO.parse("fasta.fasta", 'fasta'))
+
     nmw(seq1, seq2, seqID1, seqID2)
